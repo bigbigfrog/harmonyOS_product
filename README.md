@@ -1,20 +1,57 @@
-# harmonyOS_product
-鸿蒙实训开发
-## 项目概述
-* 确定项目类型，项目目标
-## 需求分析
-* 根据实际项目进行需求分析，确定需要的功能，便于技术选型
-## 前端
-* Uniapp(可选)
-* Vue3+Vant组件库(快速开发单页面应用，可选)
-* ant design vue(主流组件库，兼容PC和移动端)
-* React(不选Vue可选此项)
-* Axios(主流的请求库，可选)
-* 待补充
-## 后端
-* springboot
-* mysql
-* mybatis+mybatisplus
-* Hutool工具类
-* Swagger+Knife4j接口文档
-* AI大模型，接入各类大模型SDK(可选)
+# 智能家居
+
+This project is initialized with [智能家居](https://pro.ant.design). Follow is the quick guide for how to use.
+
+## Environment Prepare
+
+Install `node_modules`:
+
+```bash
+npm install
+```
+
+or
+
+```bash
+yarn
+```
+
+## Provided Scripts
+
+智能家居 provides some useful script to help you quick start and build with web project, code style check and test.
+
+Scripts provided in `package.json`. It's safe to modify or add additional script:
+
+### Start project
+
+```bash
+npm start
+```
+
+### Build project
+
+```bash
+npm run build
+```
+
+### Check code style
+
+```bash
+npm run lint
+```
+
+You can also use script to auto fix some lint error:
+
+```bash
+npm run lint:fix
+```
+
+### Test code
+
+```bash
+npm test
+```
+
+## More
+
+You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).
