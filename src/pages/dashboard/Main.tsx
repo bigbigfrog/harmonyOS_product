@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Switch, Slider, Button } from 'antd';
+import React, { useState, useEffect,useRef } from 'react';
+import {Card, Switch, Slider, Button, message,Input,Spin} from 'antd';
 import { history } from 'umi';
 import livingroom from '/public/icons/livingroom.png';
 import bedroom from '/public/icons/bedroom.png';
+import {doChatUsingPost} from "@/services/smart/aIchatController";
 
 
 /**
@@ -47,6 +48,27 @@ const Dashboard: React.FC = () => {
   const [lighting, setLighting] = useState(80);
   const [wateringTime, setWateringTime] = useState(10);
 
+  // AI对话相关
+  const [aiInput, setAiInput] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiResponse, setAiResponse] = useState('');
+
+  const handleAiChat = async () => {
+    if (!aiInput.trim()) {
+      message.warning('请输入内容');
+      return;
+    }
+    setAiLoading(true);
+    setAiResponse('');
+    try {
+      const res = await doChatUsingPost({message: aiInput});
+      setAiResponse(res || '无回复');
+    } catch (e) {
+      setAiResponse('AI服务异常');
+    }
+    setAiLoading(false);
+  };
+
   return (
     <div
       style={{
@@ -58,18 +80,6 @@ const Dashboard: React.FC = () => {
         gap: 24,
       }}
     >
-
-      {/* <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: 24,
-          // justifyItems: 'stretch', // 关键：让每个网格单元拉伸
-          background: 'linear-gradient(-225deg, #7e6780ff 0%, #2580B3 100%)',
-
-        }}
-      > */}
-
       {/* Header */}
       <div
         style={{
@@ -95,6 +105,39 @@ const Dashboard: React.FC = () => {
       <div style={{ textAlign: 'center', fontSize: 20, color: '#fff', textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
         智能家居，尽在掌控
       </div>
+
+      {/* AI对话卡片 */}
+      <Card
+        style={{
+          borderRadius: 16,
+          background: 'rgba(255,255,255,0.15)',
+          padding: 16,
+        }}
+        bodyStyle={{ padding: 0 }}
+      >
+        <h3 style={{ color: '#fff', marginBottom: 12 }}>家居智能助手</h3>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+          <Input
+            value={aiInput}
+            onChange={e => setAiInput(e.target.value)}
+            placeholder="请问有什么可以帮您的？"
+            onPressEnter={handleAiChat}
+            style={{ flex: 1, borderRadius: 8 }}
+            disabled={aiLoading}
+          />
+          <Button
+            type="primary"
+            onClick={handleAiChat}
+            loading={aiLoading}
+            style={{ borderRadius: 8 }}
+          >
+            发送
+          </Button>
+        </div>
+        <div style={{ minHeight: 32, color: '#fff', background: 'rgba(0,0,0,0.05)', borderRadius: 8, padding: 8 }}>
+          {aiLoading ? <Spin /> : aiResponse}
+        </div>
+      </Card>
 
       {/* 设备卡片容器 */}
       <div

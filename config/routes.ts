@@ -1,6 +1,4 @@
-﻿import { layout } from "@/app";
-
-export default [
+﻿export default [
   {
     path: '/user',
     layout: false,
@@ -14,7 +12,6 @@ export default [
             path: '/user/register',
             component: './user/register',
           },
-
         ],
       },
     ],
@@ -46,6 +43,6 @@ export default [
     ],
   },
   { name: '查询表格', icon: 'table', path: '/list', component: './table-list' },
-  { path: '/', redirect: '/welcome' },
+  { path: '/', redirect: '/dashboard/main' },
   { path: '*', layout: false, component: './404' },
 ];

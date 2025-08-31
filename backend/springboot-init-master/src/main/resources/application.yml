@@ -52,6 +52,21 @@ server:
     session:
       cookie:
         max-age: 2592000
+mqtt:
+  broker-url: 'tcp://192.168.20.70:1883' #本地以太网IP
+  client-id: server_java
+  topic: 'toiletTopic,bedroomTopic'
+  username: 'jiaju'
+  password: '374479130'
+logging:
+  level:
+    org:
+      springframework:
+        integration: INFO
+      eclipse:
+        paho:
+          client:
+            mqttv3: WARN
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false

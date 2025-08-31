@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Switch, Slider, Button } from 'antd';
-import { history } from 'umi';
+import { Link } from 'umi';
+import {ArrowLeftOutlined} from "@ant-design/icons";
 
 /**
  * Dashboard 页面（完整整合版）
@@ -73,6 +74,9 @@ const Dashboard: React.FC = () => {
       <div style={{ textAlign: 'center', fontSize: 20, color: '#fff', textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
         智能家居，尽在掌控
       </div>
+      <Link to="/dashboard/main">
+        <ArrowLeftOutlined style={{fontSize:'175%',color:'#84c1dc'}} />
+      </Link>
 
       {/* 设备卡片容器 */}
       <div
@@ -99,11 +103,6 @@ const Dashboard: React.FC = () => {
           <Slider min={0} max={100} value={brightness} onChange={setBrightness} style={{ marginBottom: 12 }} />
           <label style={{ color: '#fff', display: 'block' }}>色温</label>
           <Slider min={2000} max={6500} value={colorTemp} onChange={setColorTemp} />
-
-          <Button onClick={() => history.push('/dashboard/main')}>
-            返回总览
-          </Button>
-
         </Card>
 
         {/* 空调 */}

@@ -5,7 +5,7 @@
   "description": "An out-of-box UI solution for enterprise applications",
   "repository": "git@github.com:ant-design/ant-design-pro.git",
   "scripts": {
-    "analyze": "cross-env ANALYZE=1 max build",
+    "anal yze": "cross-env ANALYZE=1 max build",
     "biome:lint": "npx @biomejs/biome lint",
     "build": "max build",
     "deploy": "npm run build && npm run gh-pages",

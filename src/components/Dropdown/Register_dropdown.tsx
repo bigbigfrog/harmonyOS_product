@@ -18,7 +18,11 @@ const items: MenuProps['items'] = [
   },
 ];
 
-const Register_dropdown: React.FC = () => {
+interface RegisterDropdownProps {
+  onChange?: (lable: string) => void;
+}
+
+const Register_dropdown: React.FC<RegisterDropdownProps> = ({onChange}) => {
   // 使用 useState 钩子来管理当前选择的选项
   const [selectedLabel, setSelectedLabel] = useState<string>('请选择用户身份'); // 设置初始值为 'Item 3'
 
@@ -27,6 +31,7 @@ const Register_dropdown: React.FC = () => {
     const selectedItem = items.find((item) => item.key === e.key);
     if (selectedItem) {
       setSelectedLabel(selectedItem.label); // 更新当前选择的 label
+      onChange?.(selectedItem.label as string); // 向父组件传递
     }
   };
   return (

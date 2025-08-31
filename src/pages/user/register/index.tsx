@@ -9,6 +9,7 @@ import styles from './index.less';
 
 const Register: React.FC = () => {
   const [type, setType] = useState<string>('account');
+  const [userIdentity, setUserIdentity] = useState<string>('');
   // 表单提交
   const handleSubmit = async (values: API.UserRegisterRequest) => {
     const { userPassword, checkPassword } = values;
@@ -17,9 +18,14 @@ const Register: React.FC = () => {
       message.error('两次输入密码不一致!');
       return;
     }
+    if(!userIdentity||userIdentity==='请选择用户身份'){
+      message.error('请选择用户身份!');
+      return;
+    }
+    const finalValues = { ...values, userIdentity };
     try {
       // 注册
-      const res = await userRegisterUsingPost(values);
+      const res = await userRegisterUsingPost(finalValues);
       if (res.code === 0) {
         const defaultLoginSuccessMessage = '注册成功！';
         message.success(defaultLoginSuccessMessage);
@@ -146,7 +152,7 @@ const Register: React.FC = () => {
               {/*    },*/}
               {/*  ]}*/}
               {/*/>*/}
-              <Register_dropdown />
+              <Register_dropdown onChange={setUserIdentity}/>
             </>
           )}
         </LoginForm>

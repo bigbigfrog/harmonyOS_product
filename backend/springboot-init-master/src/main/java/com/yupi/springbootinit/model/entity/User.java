@@ -46,6 +46,11 @@ public class User {
     private String userRole;
 
     /**
+     * 用户角色：user/admin
+     */
+    private String userIdentity;
+
+    /**
      * 创建时间
      */
     private Date createTime;
