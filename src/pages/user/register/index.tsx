@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { history } from 'umi';
 import Register_dropdown from '@/components/Dropdown/Register_dropdown';
 import { userRegisterUsingPost } from '@/services/smart/userController';
+import { Link } from 'umi';
 import styles from './index.less';
 
 const Register: React.FC = () => {
@@ -49,7 +50,7 @@ const Register: React.FC = () => {
         <div className={styles.hudArc} />
         <div className={`${styles.hudArc} ${styles.hudArc2}`} />
         <div className={styles.hudCenter}>
-          <div className={styles.hudTitle}>EVA-01 ENTRY PLUG</div>
+          {/* <div className={styles.hudTitle}>EVA-01 ENTRY PLUG</div>
           <div className={styles.hudWarning}>EMERGENCY</div>
           <div className={styles.hudIndicator}>
             <span>SYNC RATE</span>
@@ -58,10 +59,10 @@ const Register: React.FC = () => {
           <div className={styles.hudIndicator}>
             <span>L.C.L LEVEL</span>
             <span className={styles.hudValue}>STABLE</span>
-          </div>
-          <div className={styles.hudBar}>
+          </div> */}
+          {/* <div className={styles.hudBar}>
             <div className={styles.hudBarFill} />
-          </div>
+          </div> */}
         </div>
       </div>
       <div className={styles.content}>
@@ -72,8 +73,8 @@ const Register: React.FC = () => {
             },
           }}
           logo={<img alt="logo" src="/logo.svg" />}
-          title={'智能家居'}
-          subTitle={'这是副标题'}
+          title={<span style={{ color: '#ffffffff' }}>智能家居</span>}
+          subTitle={<span style={{ color: '#ffffffff' }}>副标题desuwa</span>}
           onFinish={async (values) => {
             await handleSubmit(values as API.UserRegisterRequest);
           }}
@@ -153,6 +154,16 @@ const Register: React.FC = () => {
               {/*  ]}*/}
               {/*/>*/}
               <Register_dropdown onChange={setUserIdentity}/>
+              <div style={{ height: 18 }} />
+
+              <div
+                style={{
+                  marginBottom: 24,
+                }}
+              >
+                <Link to="/user/login">返回登录</Link>
+              </div>
+
             </>
           )}
         </LoginForm>
