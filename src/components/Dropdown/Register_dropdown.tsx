@@ -1,52 +1,49 @@
 import { DownOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Dropdown, Space, Typography } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 
 const items: MenuProps['items'] = [
-  {
-    key: '1',
-    label: '房主',
-  },
-  {
-    key: '2',
-    label: '家庭成员',
-  },
-  {
-    key: '3',
-    label: '访客',
-  },
+  { key: '1', label: '房主' },
+  { key: '2', label: '家庭成员' },
+  { key: '3', label: '访客' },
 ];
 
 interface RegisterDropdownProps {
-  onChange?: (lable: string) => void;
+  value?: string;
+  onChange?: (label: string) => void;
 }
 
-const Register_dropdown: React.FC<RegisterDropdownProps> = ({onChange}) => {
-  // 使用 useState 钩子来管理当前选择的选项
-  const [selectedLabel, setSelectedLabel] = useState<string>('请选择用户身份'); // 设置初始值为 'Item 3'
+const Register_dropdown: React.FC<RegisterDropdownProps> = ({ value = '', onChange }) => {
+  const displayText = value || '请选择用户身份';
 
-  // 处理菜单项选择的函数
   const handleMenuClick = (e: { key: string }) => {
     const selectedItem = items.find((item) => item.key === e.key);
-    if (selectedItem) {
-      setSelectedLabel(selectedItem.label); // 更新当前选择的 label
-      onChange?.(selectedItem.label as string); // 向父组件传递
+    if (selectedItem && onChange) {
+      onChange(selectedItem.label as string);
     }
   };
+
   return (
     <Dropdown
       menu={{
         items,
         selectable: true,
         onClick: handleMenuClick,
-        defaultSelectedKeys: ['1'],
       }}
+      trigger={['click']}
     >
-      <Typography.Link>
+      {/* 移除边框样式 */}
+      <Typography.Link style={{ 
+        display: 'block', 
+        padding: '8px 0', // 调整内边距
+        color: 'rgba(255, 255, 255, 0.8)', // 白色文字
+        cursor: 'pointer',
+        fontSize: '16px'
+      }}>
         <Space>
-          {selectedLabel}
-          <DownOutlined />
+          {displayText}
+          <DownOutlined style={{ color: 'rgba(255, 255, 255, 0.6)' }} />
         </Space>
       </Typography.Link>
     </Dropdown>
