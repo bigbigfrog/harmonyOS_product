@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { Helmet, history, useModel } from '@umijs/max';
-import { Alert, App, Tabs } from 'antd';
+import { Alert, App, Tabs, Form } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
@@ -54,6 +54,7 @@ const useStyles = createStyles(({ token }) => {
     },
   };
 });
+
 const ActionIcons = () => {
   const { styles } = useStyles();
   return (
@@ -73,10 +74,12 @@ const ActionIcons = () => {
     </>
   );
 };
+
 const Lang = () => {
   const { styles } = useStyles();
-  return;
+  return null;
 };
+
 const LoginMessage: React.FC<{
   content: string;
 }> = ({ content }) => {
@@ -91,11 +94,15 @@ const LoginMessage: React.FC<{
     />
   );
 };
+
 const Login: React.FC = () => {
   const [type, setType] = useState<string>('account');
   const { setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
   const { message } = App.useApp();
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+
   const fetchUserInfo = async () => {
     const userInfo = await getLoginUserUsingGet();
     if (userInfo) {
@@ -107,26 +114,36 @@ const Login: React.FC = () => {
       });
     }
   };
+
+  const resetForm = () => {
+    form.resetFields();
+  };
+
   const handleSubmit = async (values: API.UserLoginRequest) => {
+    setLoading(true);
     try {
-      // 登录
       const res = await userLoginUsingPost(values);
       if (res.code === 0) {
         const defaultLoginSuccessMessage = '登录成功！';
         message.success(defaultLoginSuccessMessage);
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
-        history.push(urlParams.get('redirect') || '/dashboard/main');
+        history.push(urlParams.get('redirect') || '/');
         return;
       } else {
         message.error(res.message);
+        resetForm(); // 登录失败时自动清空表单
       }
     } catch (error) {
       const defaultLoginFailureMessage = '登录失败，请重试！';
       console.log(error);
       message.error(defaultLoginFailureMessage);
+      resetForm(); // 异常时自动清空表单
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <div className={styles.container}>
       <Helmet>
@@ -143,6 +160,7 @@ const Login: React.FC = () => {
         }}
       >
         <LoginForm
+          form={form}
           contentStyle={{
             minWidth: 280,
             maxWidth: '75vw',
@@ -152,6 +170,11 @@ const Login: React.FC = () => {
           subTitle={'这是副标题'}
           onFinish={async (values) => {
             await handleSubmit(values as API.UserLoginRequest);
+          }}
+          submitter={{
+            submitButtonProps: {
+              loading: loading,
+            },
           }}
         >
           <Tabs
@@ -210,4 +233,5 @@ const Login: React.FC = () => {
     </div>
   );
 };
+
 export default Login;
