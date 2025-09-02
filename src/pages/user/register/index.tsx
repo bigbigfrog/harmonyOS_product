@@ -1,7 +1,7 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { message, Tabs, Form, Spin } from 'antd';
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect } from 'react';
 import { history } from 'umi';
 import Register_dropdown from '@/components/Dropdown/Register_dropdown';
 import { userRegisterUsingPost } from '@/services/smart/userController';
@@ -33,13 +33,13 @@ const Register: React.FC = () => {
 
   const handleSubmit = async (values: API.UserRegisterRequest) => {
     const { userPassword, checkPassword, userAccount } = values;
-    
+
     // 前端校验
     if (userPassword !== checkPassword) {
       message.error('两次输入密码不一致!');
       return;
     }
-    
+
     if(!userIdentity || userIdentity === '请选择用户身份') {
       message.error('请选择用户身份!');
       return;
@@ -47,14 +47,14 @@ const Register: React.FC = () => {
 
     const finalValues = { ...values, userIdentity };
     setLoading(true);
-    
+
     try {
       const res = await userRegisterUsingPost(finalValues);
-  
+
       if (res.code === 0) {
         message.success('注册成功！');
         forceResetForm(); // 成功时也清空表单
-        
+
         // 延迟跳转，让用户看到成功消息
         setTimeout(() => {
           if (history) {
@@ -68,9 +68,9 @@ const Register: React.FC = () => {
         forceResetForm();
       }
     } catch (error: any) {
-      const errorMsg = 
-        (error.response?.data?.message) ||  
-        (error.message) ||                
+      const errorMsg =
+        (error.response?.data?.message) ||
+        (error.message) ||
         '注册失败，请稍后重试！';
       message.error(errorMsg);
       forceResetForm();
@@ -85,14 +85,17 @@ const Register: React.FC = () => {
         <div className={styles.entryCockpit}>
           <div className={styles.hudArc} />
           <div className={`${styles.hudArc} ${styles.hudArc2}`} />
-          <div className={styles.hudCenter}>
-            {/* 可选的HUD元素 */}
-          </div>
+
+          {/* <div className={styles.hudCenter}> */}
+          {/* 可选的HUD元素 */}
+          {/* </div> */}
+
         </div>
-        
+
         <div className={styles.content}>
           <LoginForm
             form={form}
+            style={{ marginTop: '-29px' }}
             submitter={{
               searchConfig: {
                 submitText: '注册',
@@ -111,7 +114,7 @@ const Register: React.FC = () => {
                 tab={<span className={styles.tabText}>账户密码注册</span>}
               />
             </Tabs>
-            
+
             {type === 'account' && (
               <>
                 <ProFormText
@@ -171,17 +174,17 @@ const Register: React.FC = () => {
                     },
                   ]}
                 />
-                
-                <div style={{ marginBottom: 16 }}>
-                  <Register_dropdown 
-                    value={userIdentity} 
+
+                <div style={{ marginBottom: 0 }}>
+                  <Register_dropdown
+                    value={userIdentity}
                     onChange={setUserIdentity}
                   />
                 </div>
 
                 <div style={{ height: 18 }} />
 
-                <div style={{ marginBottom: 24, textAlign: 'center' }}>
+                <div style={{ marginBottom: 20, textAlign: 'center' }}>
                   <Link to="/user/login" style={{ color: '#1890ff' }}>
                     ← 返回登录页面
                   </Link>
