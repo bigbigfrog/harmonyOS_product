@@ -3,6 +3,9 @@ import { Card, Switch, Slider, Button, message, Input, Spin } from 'antd';
 import { history } from 'umi';
 import { doChatUsingPost } from '@/services/smart/aIchatController';
 import DarkVeilBackground from '@/components/AuroraBackground';
+import UserDropdown from '@/components/Dropdown/UserDropdown';
+import { useModel } from 'umi';
+// ...existing code...
 
 const themeColor = '#4d82ffff'; // 主题色
 
@@ -36,6 +39,13 @@ const Dashboard: React.FC = () => {
   const [envTemp] = useState(25);
   const [lighting] = useState(80);
   const [wateringTime, setWateringTime] = useState(10);
+
+  //获取身份
+  const { initialState } = useModel('@@initialState');
+  const currentUser = initialState?.currentUser;
+  const isOwner = currentUser?.userIdentity === '房主';
+  const isMember = currentUser?.userIdentity === '家庭成员';
+  const isVisitor = currentUser?.userIdentity === '访客';
 
   // AI对话
   const [aiInput, setAiInput] = useState('');
@@ -125,13 +135,15 @@ const Dashboard: React.FC = () => {
         >
           家庭主控
         </div>
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', alignItems: 'center' }}>
+          {/* <span style={{ fontSize: 14, fontWeight: 400, color: '#fff' }}>当前身份：{currentUser?.userIdentity || '未知'}</span>
           <Button
             onClick={() => history.push('/user/login')}
             style={{ borderRadius: 50 }}
           >
             退出
-          </Button>
+          </Button> */}
+          <UserDropdown />
         </div>
       </div>
 
@@ -305,6 +317,7 @@ const Dashboard: React.FC = () => {
         </Card>
 
         {/* 卧室 */}
+        {isOwner && (
         <Card
           style={{
             borderRadius: 20,
@@ -360,6 +373,7 @@ const Dashboard: React.FC = () => {
             />
           </Card>
         </Card>
+        )}
       </div>
 
       {/* 次要卡片行 */}
