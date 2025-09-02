@@ -99,6 +99,11 @@ const Register: React.FC = () => {
                     required: true,
                     message: '用户名是必填项！',
                   },
+                  {
+                    min: 4,
+                    type: 'string',
+                    message: '用户名不能少于 4 位！',
+                  },
                 ]}
               />
               <ProFormText.Password
