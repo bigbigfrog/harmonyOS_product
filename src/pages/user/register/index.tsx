@@ -61,7 +61,7 @@ const Register: React.FC = () => {
             const { query } = history.location;
             history.push({ pathname: 'login', query });
           }
-        }, 1500);
+        }, 500);
       } else {
         const errorMsg = res.message || '注册失败，请检查信息后重试';
         message.error(errorMsg);
