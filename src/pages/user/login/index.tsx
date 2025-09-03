@@ -167,7 +167,7 @@ const Login: React.FC = () => {
           }}
           logo={<img alt="logo" src="/logo.svg" />}
           title="智能家居"
-          subTitle={'这是副标题'}
+          subTitle={'Welcome'}
           onFinish={async (values) => {
             await handleSubmit(values as API.UserLoginRequest);
           }}
