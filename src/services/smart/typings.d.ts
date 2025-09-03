@@ -11,6 +11,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseCollectData_ = {
+    code?: number;
+    data?: CollectData;
+    message?: string;
+  };
+
   type BaseResponseInt_ = {
     code?: number;
     data?: number;
@@ -35,6 +41,18 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponsePagePost_ = {
+    code?: number;
+    data?: PagePost_;
+    message?: string;
+  };
+
+  type BaseResponsePagePostVO_ = {
+    code?: number;
+    data?: PagePostVO_;
+    message?: string;
+  };
+
   type BaseResponsePageUser_ = {
     code?: number;
     data?: PageUser_;
@@ -44,6 +62,12 @@ declare namespace API {
   type BaseResponsePageUserVO_ = {
     code?: number;
     data?: PageUserVO_;
+    message?: string;
+  };
+
+  type BaseResponsePostVO_ = {
+    code?: number;
+    data?: PostVO;
     message?: string;
   };
 
@@ -117,6 +141,17 @@ declare namespace API {
     isDelete?: number;
     name?: string;
     updateTime?: string;
+  };
+
+  type CollectData = {
+    gasDegree?: string;
+    id?: number;
+    ifFire?: number;
+    isDark?: number;
+    isLeak?: number;
+    roomType?: string;
+    temperature?: string;
+    wet?: string;
   };
 
   type DeleteRequest = {
@@ -315,9 +350,16 @@ declare namespace API {
     userId?: number;
   };
 
+  type queryUsingGETParams = {
+    /** roomType */
+    roomType?: string;
+  };
+
   type sendUsingGETParams = {
-    /** cmd */
-    cmd: string;
+    /** message */
+    message: string;
+    /** topic */
+    topic: string;
   };
 
   type uploadFileUsingPOSTParams = {

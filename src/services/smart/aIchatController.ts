@@ -8,7 +8,7 @@ export async function doChatUsingPost(
   params: API.doChatUsingPOSTParams,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseString_>("/api/chat/send", {
+  return request<string>("/api/chat/send", {
     method: "POST",
     params: {
       ...params,

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Switch, Slider, Button, message, Input, Spin } from 'antd';
-import { history } from 'umi';
 import { doChatUsingPost } from '@/services/smart/aIchatController';
+import { queryUsingGet } from "@/services/smart/dataController";
+import { sendUsingGet } from "@/services/smart/deviceController";
 import DarkVeilBackground from '@/components/AuroraBackground';
 import UserDropdown from '@/components/Dropdown/UserDropdown';
 import ClickSpark from '@/components/ClickSpark';
@@ -28,10 +29,12 @@ const Dashboard: React.FC = () => {
   const [lightsOn, setLightsOn] = useState(true);
   const [brightness, setBrightness] = useState(85);
   const [colorTemp, setColorTemp] = useState(4000);
-  const [lrHumidity] = useState(70);
-  const [lrtemperature] = useState(20);
+  const [lrHumidity,setLrHumidity] = useState(70);
+  const [lrtemperature,setLrtemperature] = useState(20);
 
-  const [acOn, setAcOn] = useState(true);
+  const [switch1, setSwitch1] = useState(false);
+  const [switch2, setSwitch2] = useState(false);
+  const [switch3, setSwitch3] = useState(false);
   const [temperature, setTemperature] = useState(24);
 
   const [securityOn] = useState(true);
@@ -52,6 +55,94 @@ const Dashboard: React.FC = () => {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiResponse, setAiResponse] = useState('');
 
+  const [toiletStatus, setToiletStatus] = useState<'有人' | '无人'>('无人');
+  const [doorwayStatus, setDoorwayStatus] = useState<'有访客' | '无访客'>('无访客');
+  const [kitchenStatus, setKitchenStatus] = useState<'安全' | '警告'>('安全');
+
+  useEffect(() => {
+    const fetchLivingroomStat = async () => {
+      try {
+        const res = await queryUsingGet({ roomType: 'livingroom' });
+        if (res?.data?.temperature) {
+          setLrtemperature(res.data.temperature);
+        }
+        if(res?.data?.wet){
+          setLrHumidity(res.data.wet);
+        }
+      } catch (e) {
+        setLrtemperature(20);
+        setLrHumidity(70);
+      }
+    };
+    fetchLivingroomStat();
+    //轮询
+    const timer = setInterval(fetchLivingroomStat, 3000); // 每3秒刷新
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const fetchToiletStat = async () => {
+      try {
+        const res = await queryUsingGet({ roomType: 'toilet' });
+        if (res?.data?.isDark === 1) {
+          setToiletStatus('有人');
+        } else if (res?.data?.isDark === 0) {
+          setToiletStatus('无人');
+        } else {
+          setToiletStatus('无人');
+        }
+      } catch (e) {
+        setToiletStatus('无人');
+      }
+    };
+    fetchToiletStat();
+    //轮询
+    const timer = setInterval(fetchToiletStat, 3000); // 每3秒刷新
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const fetchDoorwayStat = async () => {
+      try {
+        const res = await queryUsingGet({ roomType: 'doorway' });
+        if (res?.data?.isDark === 1) {
+          setDoorwayStatus('有访客');
+        } else if (res?.data?.isDark === 0) {
+          setDoorwayStatus('无访客');
+        } else {
+          setDoorwayStatus('无访客');
+        }
+      } catch (e) {
+        setDoorwayStatus('无访客');
+      }
+    };
+    fetchDoorwayStat();
+    //轮询
+    const timer = setInterval(fetchDoorwayStat, 3000); // 每3秒刷新
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const fetchKitchenStat = async () => {
+      try {
+        const res = await queryUsingGet({ roomType: 'kitchen' });
+        if (res?.data?.isLeak === 1) {
+          setKitchenStatus('警告');
+        } else if (res?.data?.isDark === 0) {
+          setKitchenStatus('安全');
+        } else {
+          setKitchenStatus('安全');
+        }
+      } catch (e) {
+        setKitchenStatus('安全');
+      }
+    };
+    fetchKitchenStat();
+    //轮询
+    const timer = setInterval(fetchKitchenStat, 3000); // 每3秒刷新
+    return () => clearInterval(timer);
+  }, []);
+
   const handleAiChat = async () => {
     if (!aiInput.trim()) {
       message.warning('请输入内容');
@@ -62,12 +153,36 @@ const Dashboard: React.FC = () => {
     try {
       const res = await doChatUsingPost({ message: aiInput });
       setAiResponse(res || '无回复');
-      setAiInput('');
+      if(res.includes('开灯')){setSwitch1(true);setSwitch2(true);setSwitch3(true);}
+      else if(res.includes('关灯'||'关闭灯光')){setSwitch1(false);setSwitch2(false);setSwitch3(false);}
     } catch (e) {
       setAiResponse('AI服务异常');
-      setAiInput('');
     }
     setAiLoading(false);
+  };
+
+  // 发送开关灯命令
+  const sendMessage = async (s1, s2, s3) => {
+    const message = `${s1 ? '1' : '0'}${s2 ? '1' : '0'}${s3 ? '1' : '0'}`;
+    try {
+      await sendUsingGet({ topic: 'bedroom_cmd', message });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // 每个开关的切换事件
+  const handleSwitch1 = async (checked) => {
+    setSwitch1(checked);
+    await sendMessage(checked, switch2, switch3);
+  };
+  const handleSwitch2 = async (checked) => {
+    setSwitch2(checked);
+    await sendMessage(switch1, checked, switch3);
+  };
+  const handleSwitch3 = async (checked) => {
+    setSwitch3(checked);
+    await sendMessage(switch1, switch2, checked);
   };
 
   return (
@@ -311,7 +426,6 @@ const Dashboard: React.FC = () => {
                   onChange={setLightsOn}
                   style={{
                     marginBottom: 12,
-                    // background: lightsOn ? '#52c41a' : '#777',
                     background: lightsOn ? '#296fe7ff' : '#777',
 
                   }}
@@ -370,23 +484,38 @@ const Dashboard: React.FC = () => {
               >
                 空调温度
               </h3>
-              <div style={{ marginBottom: 12, fontSize: 30, color: '#fff' }}>
-                {acOn ? '开启' : '关闭'}
-              </div>
               <div style={{ marginBottom: 12, fontSize: 18, color: '#fff' }}>
                 温度: {temperature}°C
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+              <div style={{ marginBottom: 12, fontSize: 30, color: '#fff' }}>
+                {switch1||switch2||switch3 ? '灯光已开启' : '灯光已关闭'}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <Switch
-                  checked={acOn}
-                  onChange={setAcOn}
+                  checked={switch1}
+                  onChange={handleSwitch1}
                   style={{
-                    marginBottom: 12,
-                    background: acOn ? '#296fe7ff' : '#777',
+                    marginRight: 24,
+                    background: switch1 ? '#52c41a' : '#777',
                   }}
                 />
-                <label style={{ color: '#fff' }}>温度调节</label>
+                <Switch
+                  checked={switch2}
+                  onChange={handleSwitch2}
+                  style={{
+                    marginRight: 24,
+                    background: switch2 ? '#52c41a' : '#777',
+                  }}
+                />
+                <Switch
+                  checked={switch3}
+                  onChange={handleSwitch3}
+                  style={{
+                    background: switch3 ? '#52c41a' : '#777',
+                  }}
+                />
               </div>
+                <label style={{ color: '#fff' }}>温度调节</label>
               <Slider
                 min={16}
                 max={30}
@@ -429,20 +558,20 @@ const Dashboard: React.FC = () => {
               厨房气体泄漏
             </h3>
             <div style={{ marginBottom: 8, fontSize: 30, color: '#fff' }}>
-              {securityOn ? '安全' : '警告'}
+              {kitchenStatus}
             </div>
             <div style={{ display: 'flex', alignItems: 'flex-start' }}>
               <label
                 style={{
                   padding: '4px 12px',
                   borderRadius: 20,
-                  background: 'linear-gradient(to right, #00b09b, #96c93d)',
+                  background: kitchenStatus==='安全'?'linear-gradient(to right, #00b09b, #96c93d)':'linear-gradient(to right, #e52d27, #b31217)',
                   color: '#fff',
                   fontSize: 12,
                   fontWeight: 600,
                 }}
               >
-                安全状态良好
+                {kitchenStatus === '安全' ? '安全状态良好' : '警报已启动'}
               </label>
             </div>
           </Card>
@@ -467,7 +596,7 @@ const Dashboard: React.FC = () => {
               厕所使用情况
             </h3>
             <div style={{ marginBottom: 12, fontSize: 30, color: '#fff' }}>
-              无人
+              {toiletStatus}
             </div>
           </Card>
 
@@ -491,7 +620,7 @@ const Dashboard: React.FC = () => {
               屋外监控
             </h3>
             <div style={{ marginBottom: 12, fontSize: 30, color: '#fff' }}>
-              无访客
+              {doorwayStatus}
             </div>
           </Card>
 
