@@ -62,8 +62,10 @@ const Dashboard: React.FC = () => {
     try {
       const res = await doChatUsingPost({ message: aiInput });
       setAiResponse(res || '无回复');
+      setAiInput('');
     } catch (e) {
       setAiResponse('AI服务异常');
+      setAiInput('');
     }
     setAiLoading(false);
   };
