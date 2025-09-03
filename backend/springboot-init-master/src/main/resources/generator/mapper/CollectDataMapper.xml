@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yupi.springbootinit.mapper.CollectDataMapper">
+
+    <resultMap id="BaseResultMap" type="com.yupi.springbootinit.model.entity.CollectData">
+            <id property="id" column="id" />
+            <result property="roomType" column="roomType" />
+            <result property="temperature" column="temperature" />
+            <result property="wet" column="wet" />
+            <result property="gasDegree" column="gasDegree" />
+            <result property="ifFire" column="ifFire" />
+            <result property="isLeak" column="isLeak" />
+            <result property="isDark" column="isDark" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,roomType,temperature,wet,gasDegree,ifFire,isLeak,isDark
+    </sql>
+</mapper>

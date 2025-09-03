@@ -1,6 +1,7 @@
 package com.yupi.springbootinit.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yupi.springbootinit.service.CollectDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,21 +21,23 @@ import org.springframework.messaging.MessageHandler;
 @Slf4j
 @Configuration
 public class MqttPubSub {
-
     @Autowired
     private MqttPahoClientFactory mqttClientFactory;
+
+    @Autowired
+    private CollectDataService collectDataService;
 
     @Value("${mqtt.topic}")
     private String topic;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-
     //订阅板子数据的(去连接板子发来的MQTT中的数据：温湿传感器。。。。。。。)
     @Bean
     public MqttPahoMessageDrivenChannelAdapter mqttInbound() {
+        String[] topics = topic.split(",");
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter("mqtt-printer-" + System.currentTimeMillis()+"-in", mqttClientFactory, topic.split(",")[0]);
+                new MqttPahoMessageDrivenChannelAdapter("mqtt-printer-" + System.currentTimeMillis()+"-in", mqttClientFactory, topics);
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);
@@ -52,10 +55,16 @@ public class MqttPubSub {
                     System.out.println("-----从开发板采集信息-----");
                     System.out.println(topic);
                     System.out.println(payload);
+                    try{
+                    long res = collectDataService.storeData(payload,topic);
+                    System.out.println(res);
+                    }
+                    catch (Exception e){
+                    log.error("保存出错",e);
+                    }
                 })
                 .get();
     }
-
 
 
     @Bean

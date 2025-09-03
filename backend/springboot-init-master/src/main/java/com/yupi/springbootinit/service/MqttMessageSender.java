@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class MqttMessageSender {
 
-
-
     @Autowired
     private MessageChannel mqttOutboundChannel;
 

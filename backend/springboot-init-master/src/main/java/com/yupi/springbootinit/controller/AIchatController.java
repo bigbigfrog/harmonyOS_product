@@ -1,7 +1,5 @@
 package com.yupi.springbootinit.controller;
 
-import com.yupi.springbootinit.common.BaseResponse;
-import com.yupi.springbootinit.common.ResultUtils;
 import com.yupi.springbootinit.service.AIChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

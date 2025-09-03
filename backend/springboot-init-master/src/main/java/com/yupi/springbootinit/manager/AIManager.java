@@ -1,7 +1,5 @@
 package com.yupi.springbootinit.manager;
 
-import com.yupi.springbootinit.common.ErrorCode;
-import com.yupi.springbootinit.exception.BusinessException;
 import io.github.briqt.spark4j.SparkClient;
 import io.github.briqt.spark4j.constant.SparkApiVersion;
 import io.github.briqt.spark4j.model.SparkMessage;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
@@ -31,7 +28,7 @@ public class AIManager {
         List<SparkMessage> messages = new ArrayList<>();
         if (isNeedTemplate) {
             // AI 生成问题的预设条件
-            String predefinedInformation = "假设你是一位智能家居专用的智慧家居管理AI，你的任务可以和用户聊天，帮助用户定时开关电器，对环境数据作出分析建议等\n";
+            String predefinedInformation = "假设你是一位智能家居专用的智慧家居管理AI，你的任务可以和用户聊天，帮助用户定时开关电器，对环境数据作出分析建议等,ps.当输入内容有\"请帮我开灯\"，“控制灯光”等语义的句子时，请在回答中固定带有“我会帮您开灯”\n";
             messages.add(SparkMessage.systemContent(predefinedInformation + "\n" + "---"));
         }
         messages.add(SparkMessage.userContent(content));
